@@ -1,0 +1,19 @@
+{
+  "suite": "agent",
+  "min_cases": 5,
+  "minimum": {
+    "trajectory_pass_rate": 1,
+    "runtime_versioned_rate": 1,
+    "path_legality_rate": 1,
+    "quote_verification_rate": 1,
+    "evidence_fingerprint_rate": 1,
+    "target_resolution_rate": 1
+  },
+  "maximum": {
+    "failures": 0,
+    "memory_scope_violations": 0,
+    "illegal_parent_decisions": 0,
+    "context_fact_violations": 0,
+    "exploration_scope_violations": 0
+  }
+}

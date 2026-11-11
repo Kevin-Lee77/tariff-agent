@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1160" viewBox="0 0 1440 1160" role="img" aria-label="六阶段归类 + 有界工具探索">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#64748b" stroke-width="1.5"/></marker></defs>
+<rect width="1440" height="1160" rx="24" fill="#f3f6fb"/>
+<path d="M24 0H1416Q1440 0 1440 24V132H0V24Q0 0 24 0" fill="#10243a"/>
+<g font-family="Inter,Segoe UI,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="44" y="39" font-size="14" fill="#67e8d4" font-weight="600">TARIFF AGENT / ENGINEERING OVERVIEW</text>
+<text x="44" y="82" font-size="32" fill="#ffffff" font-weight="700">六阶段归类 + 有界工具探索</text>
+<text x="44" y="111" font-size="17" fill="#b8c9dc" font-weight="400">固定业务顺序 · 局部只读探索 · 合法父子路径 · 专家确认</text>
+<path d="M452 258H514" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M920 258H982" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M1185 346V378H250V410" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M452 498H514" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M920 498H982" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M1185 586V654" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M250 586V654" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M718 586V654" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="48" y="176" width="404" height="170" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="193" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="70" y="206" font-size="13" fill="#0f766e" font-weight="700">STAGE 01 / ATTRIBUTES</text>
+<text x="70" y="237" font-size="23" fill="#142c46" font-weight="700">属性抽取 Agent</text>
+<text x="70" y="270" font-size="18" fill="#42556e" font-weight="400">原文 + 规范化文本 + 术语提示</text>
+<text x="70" y="299" font-size="18" fill="#42556e" font-weight="400">材质 / 功能 / 用途 / 加工方式</text>
+<text x="70" y="328" font-size="18" fill="#42556e" font-weight="400">Qwen 4B → 按需 DeepSeek 升级</text>
+<rect x="514" y="176" width="406" height="170" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="193" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="206" font-size="13" fill="#0f766e" font-weight="700">STAGE 02 / RETRIEVAL</text>
+<text x="536" y="237" font-size="23" fill="#142c46" font-weight="700">候选检索 Agent</text>
+<text x="536" y="270" font-size="18" fill="#42556e" font-weight="400">税则 + 历史案例双库</text>
+<text x="536" y="299" font-size="18" fill="#42556e" font-weight="400">BM25 + Qwen 向量 → RRF</text>
+<text x="536" y="328" font-size="18" fill="#42556e" font-weight="400">排除评测家族 / 候选上限 40</text>
+<rect x="982" y="176" width="410" height="170" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="193" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="206" font-size="13" fill="#0f766e" font-weight="700">STAGE 03 / SHORTLIST</text>
+<text x="1004" y="237" font-size="23" fill="#142c46" font-weight="700">L1 短名单与初筛</text>
+<text x="1004" y="270" font-size="18" fill="#42556e" font-weight="400">Reranker + 小模型初筛</text>
+<text x="1004" y="299" font-size="18" fill="#42556e" font-weight="400">当前父节点与候选白名单</text>
+<text x="1004" y="328" font-size="18" fill="#42556e" font-weight="400">非法输出有界纠正 / 上限 10</text>
+<rect x="48" y="410" width="404" height="176" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="427" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="70" y="440" font-size="13" fill="#0f766e" font-weight="700">STAGE 04 / RULE REASONING</text>
+<text x="70" y="471" font-size="23" fill="#142c46" font-weight="700">L2 章注与排他确认</text>
+<text x="70" y="504" font-size="18" fill="#42556e" font-weight="400">类注 / 章注 / 排他规则</text>
+<text x="70" y="533" font-size="18" fill="#42556e" font-weight="400">局部 plan → read_tool 子图</text>
+<text x="70" y="562" font-size="18" fill="#42556e" font-weight="400">补充证据 / 最多 3 个候选</text>
+<rect x="514" y="410" width="406" height="176" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="427" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="440" font-size="13" fill="#0f766e" font-weight="700">STAGE 05 / HIERARCHY</text>
+<text x="536" y="471" font-size="23" fill="#142c46" font-weight="700">子目路径解析</text>
+<text x="536" y="504" font-size="18" fill="#42556e" font-weight="400">保留五 / 七 / 九位结构分组</text>
+<text x="536" y="533" font-size="18" fill="#42556e" font-weight="400">每步只允许合法子节点</text>
+<text x="536" y="562" font-size="18" fill="#42556e" font-weight="400">六 / 八 / 十位目标逐层完成</text>
+<rect x="982" y="410" width="410" height="176" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="427" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="440" font-size="13" fill="#0f766e" font-weight="700">STAGE 06 / VERIFICATION</text>
+<text x="1004" y="471" font-size="23" fill="#142c46" font-weight="700">终评与一致性校验</text>
+<text x="1004" y="504" font-size="18" fill="#42556e" font-weight="400">五次采样 / 引用原文验证</text>
+<text x="1004" y="533" font-size="18" fill="#42556e" font-weight="400">编码合法性 / 路径 / 证据</text>
+<text x="1004" y="562" font-size="18" fill="#42556e" font-weight="400">一致率只作信号，不当概率</text>
+<rect x="48" y="654" width="404" height="178" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="671" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="70" y="684" font-size="13" fill="#0f766e" font-weight="700">BOUNDED EXPLORATION</text>
+<text x="70" y="715" font-size="23" fill="#142c46" font-weight="700">两轮预算与工具白名单</text>
+<text x="70" y="748" font-size="18" fill="#42556e" font-weight="400">plan → read_tool → plan</text>
+<text x="70" y="777" font-size="18" fill="#42556e" font-weight="400">候选范围 / 只读 / 超时与去重</text>
+<text x="70" y="806" font-size="18" fill="#42556e" font-weight="400">证据不足可追问，不扩散工具</text>
+<rect x="514" y="654" width="406" height="178" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="671" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="684" font-size="13" fill="#0f766e" font-weight="700">CONTEXT &amp; RECOVERY</text>
+<text x="536" y="715" font-size="23" fill="#142c46" font-weight="700">上下文与持久执行</text>
+<text x="536" y="748" font-size="18" fill="#42556e" font-weight="400">原始事实优先 / 整条证据筛选</text>
+<text x="536" y="777" font-size="18" fill="#42556e" font-weight="400">超额材料卸载 / 鉴权回读</text>
+<text x="536" y="806" font-size="18" fill="#42556e" font-weight="400">检查点 + 输入与知识版本</text>
+<rect x="982" y="654" width="410" height="178" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="671" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="684" font-size="13" fill="#0f766e" font-weight="700">TEACHER &amp; EXPERT</text>
+<text x="1004" y="715" font-size="23" fill="#142c46" font-weight="700">疑难升级与人工协同</text>
+<text x="1004" y="748" font-size="18" fill="#42556e" font-weight="400">DeepSeek 结构化疑难分析</text>
+<text x="1004" y="777" font-size="18" fill="#42556e" font-weight="400">缺项补充 / 专家确认与驳回</text>
+<text x="1004" y="806" font-size="18" fill="#42556e" font-weight="400">审核后导出样本和发布经验</text>
+<rect x="48" y="884" width="1344" height="177" rx="16" fill="#e6f4f0"/>
+<text x="74" y="923" font-size="24" fill="#0f5e55" font-weight="700">一条案件的可追溯输出</text>
+<text x="74" y="961" font-size="21" fill="#42556e" font-weight="400">原始输入 / 规范化版本 / 风险标注 / 属性 / 候选路径 / 引用 / 追问 / 专家决定</text>
+<text x="74" y="1000" font-size="20" fill="#42556e" font-weight="400">整体十位 Top1 / Top3 为主，六位辅助；四位 Recall 只描述候选检索。</text>
+<text x="74" y="1034" font-size="18" fill="#42556e" font-weight="400">阶段到达、待补充、无输出和失败均保留，不能只统计有输出样本。</text>
+<text x="48" y="1110" font-size="16" fill="#6b7e94" font-weight="400">六阶段 ≠ 六次调用  /  职责分工 ≠ 独立模型进程数量</text>
+</g></svg>

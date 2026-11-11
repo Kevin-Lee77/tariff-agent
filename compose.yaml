@@ -1,0 +1,107 @@
+name: tariff-agent
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.20.0
+    network_mode: host
+    environment:
+      QDRANT__SERVICE__HOST: 127.0.0.1
+      QDRANT__SERVICE__HTTP_PORT: "18033"
+      QDRANT__SERVICE__GRPC_PORT: "18034"
+      QDRANT__SERVICE__API_KEY: ${TARIFF_QDRANT_API_KEY:?Set a private Qdrant key}
+      QDRANT__STORAGE__SNAPSHOTS_PATH: /qdrant/snapshots
+      QDRANT__TELEMETRY_DISABLED: "true"
+    volumes: ["./data/private/qdrant:/qdrant/storage", "./data/private/qdrant-snapshots:/qdrant/snapshots"]
+    restart: unless-stopped
+    security_opt: ["no-new-privileges:true"]
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: tariff
+      POSTGRES_DB: tariff
+      POSTGRES_PASSWORD: ${TARIFF_PG_PASSWORD:?Set TARIFF_PG_PASSWORD in private .env}
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    ports: ["127.0.0.1:15433:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tariff -d tariff"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    build: .
+    image: tariff-agent:local
+    env_file: .env
+    network_mode: host
+    environment:
+      TARIFF_DATABASE_URL: postgresql+psycopg://tariff:${TARIFF_PG_PASSWORD}@127.0.0.1:15433/tariff
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      database: {condition: service_healthy}
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+  api:
+    image: tariff-agent:local
+    env_file: .env
+    network_mode: host
+    environment:
+      TARIFF_DATABASE_URL: postgresql+psycopg://tariff:${TARIFF_PG_PASSWORD}@127.0.0.1:15433/tariff
+    command: ["python", "-m", "uvicorn", "tariff_agent.api:create_app", "--factory", "--host", "127.0.0.1", "--port", "18010"]
+    volumes: ["./data/private:/app/data/private"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+  worker:
+    image: tariff-agent:local
+    env_file: .env
+    network_mode: host
+    environment:
+      TARIFF_DATABASE_URL: postgresql+psycopg://tariff:${TARIFF_PG_PASSWORD}@127.0.0.1:15433/tariff
+    command: ["python", "-m", "tariff_agent.worker"]
+    volumes: ["./data/private:/app/data/private"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+    stop_grace_period: 150s
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+  gateway:
+    image: nginx:1.28-alpine
+    network_mode: host
+    volumes: ["./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro"]
+    depends_on: [api]
+    restart: unless-stopped
+  tax-source:
+    image: tariff-agent:local
+    env_file: .env
+    network_mode: host
+    environment:
+      TARIFF_DATABASE_URL: postgresql+psycopg://tariff:${TARIFF_PG_PASSWORD}@127.0.0.1:15433/tariff
+    command: ["gunicorn", "--bind", "127.0.0.1:18021", "--workers", "1", "--threads", "2", "--timeout", "150", "tariff_agent.flask_services:create_source_app()"]
+    volumes: ["./data/private:/app/data/private:ro"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+  tax-language:
+    image: tariff-agent:local
+    env_file: .env
+    network_mode: host
+    environment:
+      TARIFF_DATABASE_URL: postgresql+psycopg://tariff:${TARIFF_PG_PASSWORD}@127.0.0.1:15433/tariff
+    command: ["gunicorn", "--bind", "127.0.0.1:18022", "--workers", "1", "--threads", "4", "--timeout", "150", "tariff_agent.flask_services:create_language_app()"]
+    volumes: ["./data/private:/app/data/private:ro"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+volumes:
+  postgres-data:

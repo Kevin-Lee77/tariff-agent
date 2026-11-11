@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/langfuse/langfuse",
+  "tag": "v4.76.0",
+  "commit": "246b892eae98860e6475940cae593bdb95c2ec95",
+  "file": "docker-compose.yml",
+  "sha256": "cf67837af1f69e6a0d82125bd623e63401b1b8876bf467c8c22adb8c384c7ff2",
+  "purpose": "Pinned upstream compose source; bootstrap generates an isolated six-service configuration. Runtime launch is separate."
+}

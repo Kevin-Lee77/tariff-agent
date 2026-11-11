@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1160" viewBox="0 0 1440 1160" role="img" aria-label="风险先行的申报治理与十位归类">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#64748b" stroke-width="1.5"/></marker></defs>
+<rect width="1440" height="1160" rx="24" fill="#f3f6fb"/>
+<path d="M24 0H1416Q1440 0 1440 24V132H0V24Q0 0 24 0" fill="#10243a"/>
+<g font-family="Inter,Segoe UI,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="44" y="39" font-size="14" fill="#67e8d4" font-weight="600">TARIFF AGENT / ENGINEERING OVERVIEW</text>
+<text x="44" y="82" font-size="32" fill="#ffffff" font-weight="700">风险先行的申报治理与十位归类</text>
+<text x="44" y="111" font-size="17" fill="#b8c9dc" font-weight="400">三个业务服务 · 可控 Agent · 专家协同 · 模型服务分离</text>
+<path d="M452 226H514" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M920 226H982" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M1185 292V321H250V350" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M452 435H514" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M920 435H982" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M250 523V568" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M718 523V568" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M1185 523V568" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="48" y="170" width="404" height="122" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="187" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="70" y="200" font-size="13" fill="#0f766e" font-weight="700">01 / CONSOLE</text>
+<text x="70" y="231" font-size="23" fill="#142c46" font-weight="700">React 业务工作台</text>
+<text x="70" y="264" font-size="18" fill="#42556e" font-weight="400">申报 · 词典 · 任务 · 专家复核</text>
+<rect x="514" y="170" width="406" height="122" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="187" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="200" font-size="13" fill="#0f766e" font-weight="700">02 / API</text>
+<text x="536" y="231" font-size="23" fill="#142c46" font-weight="700">FastAPI 业务接入</text>
+<text x="536" y="264" font-size="18" fill="#42556e" font-weight="400">鉴权 / CSRF / Schema / 幂等键</text>
+<rect x="982" y="170" width="410" height="122" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="187" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="200" font-size="13" fill="#0f766e" font-weight="700">03 / EXECUTION</text>
+<text x="1004" y="231" font-size="23" fill="#142c46" font-weight="700">持久任务 + 独立 Worker</text>
+<text x="1004" y="264" font-size="18" fill="#42556e" font-weight="400">租约 / 心跳 / 有限重试</text>
+<rect x="48" y="350" width="404" height="173" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="367" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="70" y="380" font-size="13" fill="#0f766e" font-weight="700">GATE A / FLASK</text>
+<text x="70" y="411" font-size="23" fill="#142c46" font-weight="700">税智源 · 原文风险校验</text>
+<text x="70" y="444" font-size="18" fill="#42556e" font-weight="400">适用税号 / 申报要素 / 风险词</text>
+<text x="70" y="473" font-size="18" fill="#42556e" font-weight="400">Word2Vec / 原文位置 / 覆盖状态</text>
+<text x="70" y="502" font-size="18" fill="#42556e" font-weight="400">仅可判断且无风险 → 后续服务</text>
+<rect x="514" y="350" width="406" height="173" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="367" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="380" font-size="13" fill="#0f766e" font-weight="700">GATE B / FLASK</text>
+<text x="536" y="411" font-size="23" fill="#142c46" font-weight="700">税智语 · 术语与规范治理</text>
+<text x="536" y="444" font-size="18" fill="#42556e" font-weight="400">同义 / 规范词 / 否定 / 独立词</text>
+<text x="536" y="473" font-size="18" fill="#42556e" font-weight="400">互斥 / 歧义 / 字段与章节范围</text>
+<text x="536" y="502" font-size="18" fill="#42556e" font-weight="400">保留原文与编号 → 归类研判</text>
+<rect x="982" y="350" width="410" height="173" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="367" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="380" font-size="13" fill="#0f766e" font-weight="700">LANGGRAPH / NINE NODES</text>
+<text x="1004" y="411" font-size="23" fill="#142c46" font-weight="700">六阶段归类 Workflow</text>
+<text x="1004" y="444" font-size="18" fill="#42556e" font-weight="400">抽取 → 检索 → L1 → L2</text>
+<text x="1004" y="473" font-size="18" fill="#42556e" font-weight="400">子目解析 → 证据终评</text>
+<text x="1004" y="502" font-size="18" fill="#42556e" font-weight="400">合法路径 / 六、八、十位目标</text>
+<rect x="48" y="568" width="404" height="173" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="585" width="4" height="32" rx="2" fill="#b45309"/>
+<text x="70" y="598" font-size="13" fill="#b45309" font-weight="700">STOP / DO NOT CLASSIFY</text>
+<text x="70" y="629" font-size="23" fill="#142c46" font-weight="700">风险阻断与企业反馈</text>
+<text x="70" y="662" font-size="18" fill="#42556e" font-weight="400">命中：原文标注 + 整改报告</text>
+<text x="70" y="691" font-size="18" fill="#42556e" font-weight="400">缺项 / 未覆盖：补充或人工核查</text>
+<text x="70" y="720" font-size="18" fill="#42556e" font-weight="400">整改后提交新版本，重新校验</text>
+<rect x="514" y="568" width="406" height="173" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="585" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="598" font-size="13" fill="#0f766e" font-weight="700">DICTIONARY LIFECYCLE</text>
+<text x="536" y="629" font-size="23" fill="#142c46" font-weight="700">词典维护与建议审核</text>
+<text x="536" y="662" font-size="18" fill="#42556e" font-weight="400">未知词向量聚类 / 词簇合并</text>
+<text x="536" y="691" font-size="18" fill="#42556e" font-weight="400">规范 / 否定 / 独立 / 互斥词典</text>
+<text x="536" y="720" font-size="18" fill="#42556e" font-weight="400">修订 → 审核 → 版本发布</text>
+<rect x="982" y="568" width="410" height="173" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="585" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="598" font-size="13" fill="#0f766e" font-weight="700">HUMAN IN THE LOOP</text>
+<text x="1004" y="629" font-size="23" fill="#142c46" font-weight="700">专家确认与反馈回流</text>
+<text x="1004" y="662" font-size="18" fill="#42556e" font-weight="400">DeepSeek 疑难报告 / 缺项追问</text>
+<text x="1004" y="691" font-size="18" fill="#42556e" font-weight="400">原生 interrupt / resume</text>
+<text x="1004" y="720" font-size="18" fill="#42556e" font-weight="400">审核样本导出 / 经验显式发布</text>
+<text x="48" y="801" font-size="23" fill="#142c46" font-weight="700">基础设施与运行约束</text>
+<rect x="48" y="824" width="404" height="192" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="48" y="841" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="70" y="854" font-size="13" fill="#0f766e" font-weight="700">MODEL PLANE</text>
+<text x="70" y="885" font-size="23" fill="#142c46" font-weight="700">模型网关与 API</text>
+<text x="70" y="918" font-size="18" fill="#42556e" font-weight="400">DeepSeek：规则 / 子目 / 疑难</text>
+<text x="70" y="947" font-size="18" fill="#42556e" font-weight="400">Qwen 4B：可选抽取与初筛</text>
+<text x="70" y="976" font-size="18" fill="#42556e" font-weight="400">Qwen 8B Embedding + Reranker</text>
+<text x="70" y="1005" font-size="18" fill="#42556e" font-weight="400">跨机鉴权 TLS / 独立凭证</text>
+<rect x="514" y="824" width="406" height="192" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="514" y="841" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="536" y="854" font-size="13" fill="#0f766e" font-weight="700">KNOWLEDGE &amp; PERSISTENCE</text>
+<text x="536" y="885" font-size="23" fill="#142c46" font-weight="700">检索、数据与检查点</text>
+<text x="536" y="918" font-size="18" fill="#42556e" font-weight="400">Qdrant：税则 + 历史案例</text>
+<text x="536" y="947" font-size="18" fill="#42556e" font-weight="400">BM25 / 向量 / RRF / 精排</text>
+<text x="536" y="976" font-size="18" fill="#42556e" font-weight="400">SQLite / PostgreSQL / Alembic</text>
+<text x="536" y="1005" font-size="18" fill="#42556e" font-weight="400">原生检查点 / 任务与词典版本</text>
+<rect x="982" y="824" width="410" height="192" rx="16" fill="white" stroke="#d9e3ef"/>
+<rect x="982" y="841" width="4" height="32" rx="2" fill="#0f766e"/>
+<text x="1004" y="854" font-size="13" fill="#0f766e" font-weight="700">QUALITY &amp; OPERATIONS</text>
+<text x="1004" y="885" font-size="23" fill="#142c46" font-weight="700">记忆、评测与可观测性</text>
+<text x="1004" y="918" font-size="18" fill="#42556e" font-weight="400">案件事实 / 审核经验 / TTL</text>
+<text x="1004" y="947" font-size="18" fill="#42556e" font-weight="400">证据预算 / 卸载回读 / 轨迹</text>
+<text x="1004" y="976" font-size="18" fill="#42556e" font-weight="400">开发 Badcase / 留出家族隔离</text>
+<text x="1004" y="1005" font-size="18" fill="#42556e" font-weight="400">OpenTelemetry / 可选 OTLP</text>
+<text x="48" y="1070" font-size="16" fill="#0f766e" font-weight="700">工程约束</text>
+<text x="162" y="1070" font-size="18" fill="#42556e" font-weight="400">风险未通过不归类  ·  未审核经验不共享  ·  私有业务数据不随代码发布</text>
+<text x="48" y="1110" font-size="14" fill="#6b7e94" font-weight="400">PUBLIC SOURCE EDITION  /  架构示意，不包含原部署地址、账号或业务记录</text>
+</g></svg>
