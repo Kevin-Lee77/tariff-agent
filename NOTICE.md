@@ -2,7 +2,7 @@
 
 本仓库提供商品归类与申报治理的脱敏工程。真实客户系统、私有词典、材料和测试样本不在发布范围。
 
-设计参考 [HSCodeComp 论文](https://arxiv.org/abs/2605.14857)和 [Analytics-Everywhere-Lab/hts](https://github.com/Analytics-Everywhere-Lab/hts) 的层级规则、检索和分阶段研判思路；本工程围绕风险前置、术语治理、十位目录、专家协同、恢复和接口组织实现，不将参考项目的性能写成本仓库成绩。
+确定性六阶段设计参考 [A Deterministic Agentic Workflow for HS Tariff Classification](https://arxiv.org/abs/2605.14857)，多智能体检索与一致性研判参考 [Analytics-Everywhere-Lab/hts](https://github.com/Analytics-Everywhere-Lab/hts)。二者是不同的参考来源；本工程围绕风险前置、术语治理、十位目录、专家协同、恢复和接口组织实现，不将论文或参考仓库的性能写成本项目成绩。
 
 LangGraph、FastMCP、FastAPI、Flask、React、Qdrant、SQLAlchemy、OpenTelemetry 和 Qwen 模型遵循各自许可证及使用条款。
 
