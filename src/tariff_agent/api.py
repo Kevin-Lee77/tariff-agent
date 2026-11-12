@@ -422,6 +422,9 @@ def create_app(settings=None):
     from .asset_api import router as asset_router
 
     app.include_router(asset_router(s, user, reviewer, idem))
+    from .asset_batch_api import router as batch_router
+
+    app.include_router(batch_router(s, user, reviewer, idem))
     from .memory_api import router as memory_router
 
     app.include_router(memory_router(s, user, reviewer, knowledge))

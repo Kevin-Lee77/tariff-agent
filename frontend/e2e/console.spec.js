@@ -3,28 +3,131 @@ import fs from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
-test('pilot report shows overall and reached denominators separately',async ({page})=>{
+test("business CSV import exposes invalid rows and never applies partial data", async ({
+  page,
+}) => {
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
   await login(page);
-  await page.route('**/v1/evaluations/status',async route=>{
-    const response=await route.fetch();
-    const body=await response.json();
-    const retention={hits:1,n:2,value:0.5},reached={hits:1,n:1,value:1};
-    body.experiments=[{name:'synthetic-ui-pilot',pilot:true,suite:'agent',n_completed:2,
-      variant:'synthetic fixture',label_status:'synthetic-ui-only',
-      metrics:{'heading_recall@40':{hits:1,n:1,value:1},top1_10digit:{hits:1,n:2,accuracy:0.5},top1_6digit:{hits:1,n:2,accuracy:0.5},failures:0,model_requests:0},
-      stage_metrics:{statuses:{awaiting_information:1,awaiting_review:1},stages:{retrieved:{
-        reference_heading_retention_all_cases:retention,reference_heading_retention_reached_cases:reached}}}}];
-    await route.fulfill({response,json:body});
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "业务数据与词典", exact: true })
+    .click();
+  await page.getByLabel("导入词典名称", { exact: true }).fill("CI批次错误检查");
+  await page
+    .getByLabel("导入数据文件", { exact: true })
+    .setInputFiles({
+      name: "invalid-terms.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("term,canonical\n测试别名,测试主词\n,测试主词\n"),
+    });
+  await page.getByRole("button", { name: "上传并校验", exact: true }).click();
+  await expect(page.locator(".batch-detail")).toContainText(
+    "整批未写入业务库",
+    { timeout: 30000 },
+  );
+  await expect(page.locator(".batch-detail")).toContainText("错误 1");
+  await expect(
+    page.locator(".batch-detail").getByRole("link", { name: "下载错误明细" }),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("dictionary import and bulk promotion create an immutable revised version", async ({
+  page,
+}) => {
+  await login(page);
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "业务数据与词典", exact: true })
+    .click();
+  await page
+    .getByLabel("导入词典名称", { exact: true })
+    .fill("CI批量主从词检查");
+  await page
+    .getByLabel("导入数据文件", { exact: true })
+    .setInputFiles({
+      name: "terms.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from(
+        "term,canonical,element_code,scope\n冻制,冷冻,STORAGE,02\n冷冻,冷冻,STORAGE,02\n",
+      ),
+    });
+  await page.getByRole("button", { name: "上传并校验", exact: true }).click();
+  await expect(page.locator(".batch-detail")).toContainText(
+    "整批校验通过，已入库",
+    { timeout: 30000 },
+  );
+  await page.getByRole("button", { name: "查看导入词典", exact: true }).click();
+  await page
+    .getByRole("checkbox", { name: "选择词条 冻制", exact: true })
+    .check();
+  await page
+    .getByRole("combobox", { name: "词条批量操作", exact: true })
+    .selectOption("promote");
+  await page.getByLabel("批量调整依据", { exact: true }).fill("CI人工切换主词");
+  await page.getByRole("button", { name: "保存批量调整", exact: true }).click();
+  await expect(page.locator(".table-wrap").first()).toContainText(
+    "规范词：冻制",
+  );
+  await expect(
+    page.getByRole("button", { name: "审核发布此版本", exact: true }),
+  ).toBeDisabled();
+});
+
+test("pilot report shows overall and reached denominators separately", async ({
+  page,
+}) => {
+  await login(page);
+  await page.route("**/v1/evaluations/status", async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    const retention = { hits: 1, n: 2, value: 0.5 },
+      reached = { hits: 1, n: 1, value: 1 };
+    body.experiments = [
+      {
+        name: "synthetic-ui-pilot",
+        pilot: true,
+        suite: "agent",
+        n_completed: 2,
+        variant: "synthetic fixture",
+        label_status: "synthetic-ui-only",
+        metrics: {
+          "heading_recall@40": { hits: 1, n: 1, value: 1 },
+          top1_10digit: { hits: 1, n: 2, accuracy: 0.5 },
+          top1_6digit: { hits: 1, n: 2, accuracy: 0.5 },
+          failures: 0,
+          model_requests: 0,
+        },
+        stage_metrics: {
+          statuses: { awaiting_information: 1, awaiting_review: 1 },
+          stages: {
+            retrieved: {
+              reference_heading_retention_all_cases: retention,
+              reference_heading_retention_reached_cases: reached,
+            },
+          },
+        },
+      },
+    ];
+    await route.fulfill({ response, json: body });
   });
-  await page.goto('/');
-  await page.getByRole('button',{name:'评测中心',exact:true}).click();
-  const card=page.locator('article.report').filter({has:page.getByRole('heading',{name:'synthetic-ui-pilot',exact:true})});
-  await expect(card).toContainText('十位Top1标签一致');
-  await expect(card).toContainText('六位Top1标签一致');
-  await expect(card).not.toContainText('品目 Recall@40');
-  await expect(card).toContainText('1/2');
-  await expect(card).toContainText('1/1');
-  await expect(card).toContainText('完整Agent开发集及留出集尚未完成');
+  await page.goto("/");
+  await page.getByRole("button", { name: "评测中心", exact: true }).click();
+  const card = page
+    .locator("article.report")
+    .filter({
+      has: page.getByRole("heading", {
+        name: "synthetic-ui-pilot",
+        exact: true,
+      }),
+    });
+  await expect(card).toContainText("十位Top1标签一致");
+  await expect(card).toContainText("六位Top1标签一致");
+  await expect(card).not.toContainText("品目 Recall@40");
+  await expect(card).toContainText("1/2");
+  await expect(card).toContainText("1/1");
+  await expect(card).toContainText("完整Agent开发集及留出集尚未完成");
 });
 
 function credentials() {
@@ -230,21 +333,42 @@ test("tax language independently normalizes synonyms and preserves negation", as
   ).toBeVisible();
 });
 
-test('agent memory page and risk-blocked task show isolated working state', async ({page})=>{
-  await login(page); await page.goto('/');
-  await page.getByRole('button',{name:'Agent记忆',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'任务记忆与专家经验',exact:true})).toBeVisible();
-  await expect(page.getByText('尚无已发布的专家记忆。在已确认任务详情中可由专家发布。')).toBeVisible();
-  await page.getByRole('button',{name:'商品归类',exact:true}).click();
-  await page.getByRole('combobox',{name:'词典环境'}).selectOption('sandbox');
-  await page.getByRole('textbox',{name:'申报原文',exact:true}).fill('税号：0202300090；品名：变质牛肉；备注：记忆隔离回归');
-  await page.getByRole('button',{name:'开始归类'}).click();
-  await expect(page.getByRole('heading',{name:'税智源 · 退回企业整改'})).toBeVisible({timeout:30000});
-  await page.getByRole('button',{name:'记忆与恢复',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'任务记忆与恢复',exact:true})).toBeVisible();
-  await expect(page.getByText('最近阶段：settled',{exact:false})).toBeVisible();
-  await expect(page.getByRole('heading',{name:'调用链路',exact:true})).toBeVisible();
-  await expect(page.getByRole('button',{name:'发布为专家案例记忆'})).toHaveCount(0);
+test("agent memory page and risk-blocked task show isolated working state", async ({
+  page,
+}) => {
+  await login(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Agent记忆", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "任务记忆与专家经验", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("尚无已发布的专家记忆。在已确认任务详情中可由专家发布。"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "商品归类", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "词典环境" })
+    .selectOption("sandbox");
+  await page
+    .getByRole("textbox", { name: "申报原文", exact: true })
+    .fill("税号：0202300090；品名：变质牛肉；备注：记忆隔离回归");
+  await page.getByRole("button", { name: "开始归类" }).click();
+  await expect(
+    page.getByRole("heading", { name: "税智源 · 退回企业整改" }),
+  ).toBeVisible({ timeout: 30000 });
+  await page.getByRole("button", { name: "记忆与恢复", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "任务记忆与恢复", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("最近阶段：settled", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "调用链路", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "发布为专家案例记忆" }),
+  ).toHaveCount(0);
 });
 
 test("evaluation center shows explicit index readiness without invented scores", async ({
@@ -306,16 +430,24 @@ test("business asset workbench filters bill and negative and opens dictionary en
     .getByRole("combobox", { name: "数据类型" })
     .selectOption("negative");
   await page.getByRole("textbox", { name: "数据检索" }).fill("变质");
-  await expect(page.locator("tbody")).toContainText("变质");
+  await expect(
+    page.locator(".table-wrap").first().locator("tbody"),
+  ).toContainText("变质");
   await page.getByRole("textbox", { name: "数据检索" }).fill("");
   await page
     .getByRole("combobox", { name: "数据类型" })
     .selectOption("dictionaries");
   await page.getByRole("textbox", { name: "数据检索" }).fill("合成synonym词典");
-  await expect(page.locator("tbody tr")).toHaveCount(1);
-  await expect(page.locator("tbody")).toContainText("合成synonym词典");
+  await expect(
+    page.locator(".table-wrap").first().locator("tbody tr"),
+  ).toHaveCount(1);
+  await expect(
+    page.locator(".table-wrap").first().locator("tbody"),
+  ).toContainText("合成synonym词典");
   await page.getByRole("button", { name: "查看词条" }).click();
-  await expect(page.locator("tbody")).toContainText("冻制");
+  await expect(
+    page.locator(".table-wrap").first().locator("tbody"),
+  ).toContainText("冻制");
   await expect(
     page.getByRole("button", { name: "审核发布此版本" }),
   ).toBeDisabled();

@@ -23,8 +23,9 @@ def process_one(settings, models=None):
     job = store.claim(settings.lease_seconds, settings.max_attempts)
     if job is None:
         return False
-    owned = models is None
-    models = models or Models(settings)
+    is_batch = job["kind"] == "asset_batch"
+    owned = models is None and not is_batch
+    models = models if is_batch else models or Models(settings)
     if hasattr(models, "bind"):
         models.bind(store, job["id"], job["token"])
     done = threading.Event()
@@ -38,6 +39,11 @@ def process_one(settings, models=None):
     lease_thread = threading.Thread(target=heartbeat, daemon=True)
     lease_thread.start()
     try:
+        if is_batch:
+            from .asset_batches import process_batch
+
+            process_batch(settings, store, job)
+            return True
         if job["kind"] == "terms":
             result = normalize_terms(TermRequest.model_validate(job["payload"]), models.embed)
             # Persist per-task proposal, not a global overwrite: operator controls publishing.

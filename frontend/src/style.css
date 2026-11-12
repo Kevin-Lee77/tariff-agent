@@ -1323,6 +1323,28 @@ blockquote cite {
   box-shadow: 0 6px 30px #19335119;
   max-width: 80vw;
 }
+.batch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.batch-detail {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #dce5f1;
+}
+.block-note {
+  display: block;
+  margin-top: 6px;
+  color: #71839c;
+}
+details > summary {
+  cursor: pointer;
+  padding: 14px 0;
+  font-weight: 600;
+}
+
 .toast.error {
   color: #bd7c70;
   border-color: #f1dbd6;

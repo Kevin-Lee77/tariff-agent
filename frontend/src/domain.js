@@ -25,6 +25,7 @@ const statusText = {
   awaiting_models: "待推理服务",
 };
 const kindText = {
+  asset_batch: "业务数据批次",
   case: "商品归类",
   terms: "术语词典维护",
   risk: "匹配算法联调",
@@ -43,7 +44,7 @@ const stages = [
 ];
 const menus = [
   ["evaluation", Activity, "评测中心"],
-  ['memory', BrainCircuit, 'Agent记忆'],
+  ["memory", BrainCircuit, "Agent记忆"],
   ["assets", Files, "业务数据与词典"],
   ["overview", LayoutDashboard, "工作概览"],
   ["classification", GitBranch, "商品归类"],

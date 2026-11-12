@@ -20,6 +20,8 @@
 
 ## 执行与持久化
 
+业务文件批次同样复用持久任务与Worker，附件和逐行结果分别落表。先完成有界解析和全行校验，最终导入与任务完成在一个租约保护事务提交；取消和故障重试有独立验证。词典修改保留不可变修订、快照指纹和发布谱系，详见[业务管理](business-workflows.md)。
+
 FastAPI 写入持久任务，独立 Worker 用租约、心跳和幂等键控制执行。LangGraph 原生检查点保存状态，恢复时核对输入与知识版本。SQLAlchemy 支持 SQLite/PostgreSQL，Alembic 管理迁移。Compose 方案将所有业务服务连接同一 PostgreSQL。
 
 两个 Flask/Gunicorn 服务既可独立对接，也由 Agent 工具适配器调用。FastMCP 暴露领域工具；工具接入遵守同一 Schema、候选范围和来源规则。

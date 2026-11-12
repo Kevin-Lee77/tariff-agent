@@ -287,6 +287,31 @@ def language_check(req: CaseInput, settings, published=None):
         )
 
     for entry in config.get("entries", []):
+        conditions = entry["payload"].get("conditions", [])
+        if conditions and entry["kind"] in ("mutex", "classification_mutex", "score"):
+            from .business_rules import match_conditions
+
+            matched = match_conditions(conditions, req)
+            if matched:
+                if entry["kind"] == "score":
+                    scores.append(
+                        {
+                            "term": entry["term"],
+                            "score": entry["payload"].get("score", 0),
+                            "source": entry["dictionary_id"],
+                            "matched_fields": matched,
+                        }
+                    )
+                else:
+                    warnings.append(
+                        {
+                            "reason": "cross_element_mutex",
+                            "text": entry["term"],
+                            "matched_fields": matched,
+                            "dictionary_id": entry["dictionary_id"],
+                        }
+                    )
+            continue
         if entry["kind"] == "nonstandard" and mentions(entry["term"]):
             warnings.append(
                 {

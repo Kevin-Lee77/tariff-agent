@@ -64,6 +64,12 @@ const base = 'http://127.0.0.1:18001';
     await page.getByRole('button', {name: '评测中心', exact: true}).click();
     await expect(page.getByRole('heading', {name: '数据隔离与实验'})).toBeVisible();
     await page.screenshot({path: path.join(images, 'evaluation.png'), fullPage: true});
+    await page.getByRole('button', {name: '业务数据与词典', exact: true}).click();
+    await page.getByLabel('导入词典名称', {exact: true}).fill('公开展示合成词典');
+    await page.getByLabel('导入数据文件', {exact: true}).setInputFiles({name: 'synthetic-terms.csv', mimeType: 'text/csv', buffer: Buffer.from('term,canonical,element_code,scope\n冻制,冷冻,STORAGE,02\n冷冻,冷冻,STORAGE,02\n')});
+    await page.getByRole('button', {name: '上传并校验', exact: true}).click();
+    await expect(page.locator('.batch-detail')).toContainText('整批校验通过，已入库', {timeout: 30000});
+    await page.locator('section').filter({has: page.getByRole('heading', {name: '批量导入与导出', exact: true})}).screenshot({path: path.join(images, 'business-batches.png')});
     await page.setViewportSize({width: 1440, height: 1200});
     for (const name of ['architecture', 'workflow']) {
       await page.goto('file://' + path.join(images, name + '.svg'));
@@ -71,7 +77,7 @@ const base = 'http://127.0.0.1:18001';
       await svg.screenshot({path: path.join(runtime, name + '-preview.png')});
     }
     expect(errors).toEqual([]);
-    console.log(JSON.stringify({screenshots: 4, diagram_previews: 2, synthetic_only: true, frontend_errors: 0}));
+    console.log(JSON.stringify({screenshots: 5, diagram_previews: 2, synthetic_only: true, frontend_errors: 0}));
   } finally {
     await browser.close();
     child.kill('SIGTERM');

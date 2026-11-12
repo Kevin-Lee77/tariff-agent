@@ -4,6 +4,7 @@ import hashlib
 import json
 import time
 import uuid
+from contextlib import nullcontext
 
 from sqlalchemy import func, insert, select, update
 
@@ -25,11 +26,11 @@ def identifier(*parts):
 
 
 class Assets(Store):
-    def import_bundle(self, bundle):
+    def import_bundle(self, bundle, connection=None):
         """One immutable dataset per transaction, deterministic identities and replay."""
         fingerprint = hashlib.sha256(dump(bundle).encode()).hexdigest()
         batch = identifier(fingerprint)
-        with self.connect(write=True) as db:
+        with self.connect(write=True) if connection is None else nullcontext(connection) as db:
             previous = db.execute(
                 select(data_imports).where(data_imports.c.fingerprint == fingerprint)
             ).first()
@@ -345,6 +346,32 @@ class Assets(Store):
                 raise KeyError("Dictionary not found")
             if row.synthetic:
                 raise Conflict("Generated/sandbox assets cannot be published as business dictionaries")
+            # Serialize one import family so concurrent drafts cannot both become active.
+            db.execute(
+                select(data_imports.c.id).where(data_imports.c.id == row.import_id).with_for_update()
+            ).first()
+            family = {
+                r.id: r
+                for r in db.execute(
+                    select(dictionary_version).where(dictionary_version.c.import_id == row.import_id)
+                )
+            }
+
+            def root_of(item):
+                visited = set()
+                while item.parent_id:
+                    if item.id in visited or item.parent_id not in family:
+                        raise Conflict("Invalid dictionary lineage")
+                    visited.add(item.id)
+                    item = family[item.parent_id]
+                return item.id
+
+            root = root_of(row)
+            active = [r.id for r in family.values() if r.active and not r.synthetic and root_of(r) == root]
+            if (row.status in ("approved", "withdrawn") and not row.active) or any(
+                i not in (row.id, row.parent_id) for i in active
+            ):
+                raise Conflict("Base version was superseded; create a revision from the current version")
             config = json.loads(row.config)
             if row.kind == "risk" and not config.get("coverage"):
                 raise Conflict("Risk coverage must be explicitly reviewed before publication")
@@ -376,6 +403,12 @@ class Assets(Store):
             ).first()
             if not old:
                 raise KeyError("Dictionary not found")
+            if old.synthetic and not old.active:
+                raise Conflict("Sandbox base version was superseded; reload the current version")
+            if entries is not None and old.kind != "risk":
+                from .business_rules import validate_entries
+
+                validate_entries(old.kind, entries)
             values = dict(old._mapping) | {
                 "id": revision,
                 "name": name or old.name,

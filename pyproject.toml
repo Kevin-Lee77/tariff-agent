@@ -18,7 +18,7 @@ training = ["peft>=0.15,<1"]
 mcp = ["fastmcp>=2,<4"]
 retrieval = ["qdrant-client>=1.15,<2"]
 evaluation = ["agentevals>=0.0.9,<1"]
-production = ["psycopg[binary]>=3.2,<4", "alembic>=1.14,<2", "supervisor>=4.2,<5", "langgraph-checkpoint-postgres>=3.2,<4", "opentelemetry-exporter-otlp-proto-http>=1.40,<2"]
+production = ["psycopg[binary]>=3.2,<4", "alembic>=1.14,<2", "supervisor>=4.2,<5", "langgraph-checkpoint-postgres>=3.2,<4", "opentelemetry-exporter-otlp-proto-http>=1.40,<2", "openpyxl>=3.1,<4"]
 
 [project.scripts]
 tariff = "tariff_agent.cli:main"

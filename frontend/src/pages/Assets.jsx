@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { api, post } from "../api";
 import { ElementEditor } from "../components/ui";
+import {
+  BusinessBatches,
+  DictionaryOperations,
+} from "../components/BusinessWorkflows";
 
 const labels = {
   synonym: "同义词",
@@ -17,6 +21,7 @@ const labels = {
   risk: "风险策略",
 };
 export function Assets({ actor, notify, onSubmit }) {
+  const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(true);
   const [kind, setKind] = useState("bill"),
     [data, setData] = useState({ items: [], total: 0 }),
@@ -30,6 +35,19 @@ export function Assets({ actor, notify, onSubmit }) {
     [busy, setBusy] = useState(false);
   const reviewer = ["admin", "reviewer"].includes(actor.role),
     writer = ["admin", "operator"].includes(actor.role);
+  useEffect(() => setSelected([]), [version?.id]);
+  async function openDictionary(id) {
+    try {
+      const value = await api(`/v1/business/dictionaries/${id}`);
+      setVersion(value);
+      setKind("entries");
+      setQuery("");
+      setOffset(0);
+      setRefresh((x) => x + 1);
+    } catch (e) {
+      notify(e.message, true);
+    }
+  }
   useEffect(() => {
     api("/v1/assets/summary")
       .then(setSummary)
@@ -180,6 +198,9 @@ export function Assets({ actor, notify, onSubmit }) {
           <table>
             <thead>
               <tr>
+                {kind === "entries" && reviewer && version?.kind !== "risk" && (
+                  <th>选择</th>
+                )}
                 <th>
                   {kind === "bill"
                     ? "税号 / 申报内容"
@@ -196,6 +217,24 @@ export function Assets({ actor, notify, onSubmit }) {
             <tbody>
               {data.items.map((row) => (
                 <tr key={row.id}>
+                  {kind === "entries" &&
+                    reviewer &&
+                    version?.kind !== "risk" && (
+                      <td>
+                        <input
+                          type="checkbox"
+                          aria-label={`选择词条 ${row.term}`}
+                          checked={selected.includes(row.id)}
+                          onChange={(e) =>
+                            setSelected(
+                              e.target.checked
+                                ? [...selected, row.id]
+                                : selected.filter((id) => id !== row.id),
+                            )
+                          }
+                        />
+                      </td>
+                    )}
                   <td>
                     {kind === "bill" ? (
                       <>
@@ -218,6 +257,22 @@ export function Assets({ actor, notify, onSubmit }) {
                           要素{" "}
                           {row.element_name || row.element_code || "未限定"}
                         </p>
+                        {row.payload?.conditions?.length > 0 && (
+                          <p className="small-note">
+                            全部命中：
+                            {row.payload.conditions
+                              .map(
+                                (c) =>
+                                  (c.element_code || c.element_name) +
+                                  "：" +
+                                  c.terms.join(" / "),
+                              )
+                              .join("；")}
+                            {row.payload.score !== undefined
+                              ? ` · 配置分数 ${row.payload.score}`
+                              : ""}
+                          </p>
+                        )}
                       </>
                     ) : (
                       <>
@@ -359,6 +414,14 @@ export function Assets({ actor, notify, onSubmit }) {
           }}
         />
       )}
+      {version && reviewer && version.kind !== "risk" && (
+        <DictionaryOperations
+          version={version}
+          selected={selected}
+          notify={notify}
+          onSaved={(row) => openDictionary(row.id)}
+        />
+      )}
       {version && reviewer && (
         <DictionaryRevision
           key={version.id}
@@ -371,6 +434,13 @@ export function Assets({ actor, notify, onSubmit }) {
           }}
         />
       )}
+      <BusinessBatches
+        actor={actor}
+        notify={notify}
+        version={version}
+        assetKind={kind}
+        onImported={openDictionary}
+      />
     </>
   );
 }
@@ -469,18 +539,21 @@ function DictionaryRevision({ version, notify, onSaved }) {
       <p>
         保存为新版本；历史原始词典须审核后才参与业务处理。合成词典禁止发布为正式词典。
       </p>
-      <label>
-        修订内容（JSON，可省略以复制当前版本）
-        <textarea
-          aria-label="词典修订内容"
-          rows={5}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={
-            '{"entries":[{"term":"别名","canonical":"规范词","scope":"02"}]}；风险策略只修改config.coverage与element_names'
-          }
-        />
-      </label>
+      <details>
+        <summary>高级词典配置与完整条目修订</summary>
+        <label>
+          修订内容（JSON，可省略以复制当前版本）
+          <textarea
+            aria-label="词典修订内容"
+            rows={5}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={
+              '{"entries":[{"term":"别名","canonical":"规范词","scope":"02"}]}；风险策略只修改config.coverage与element_names'
+            }
+          />
+        </label>
+      </details>
       <label>
         审核或修订理由
         <input

@@ -3,7 +3,19 @@
 from functools import lru_cache
 from pathlib import Path
 
-from sqlalchemy import Column, Float, ForeignKey, Index, Integer, MetaData, Table, Text, create_engine, event
+from sqlalchemy import (
+    Column,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    LargeBinary,
+    MetaData,
+    Table,
+    Text,
+    create_engine,
+    event,
+)
 
 metadata = MetaData()
 jobs = Table(
@@ -24,6 +36,25 @@ jobs = Table(
     Column("updated", Float, nullable=False),
 )
 Index("jobs_claim", jobs.c.status, jobs.c.created)
+
+asset_batch_files = Table(
+    "asset_batch_files",
+    metadata,
+    Column("job_id", Text, ForeignKey("jobs.id"), primary_key=True),
+    Column("filename", Text, nullable=False),
+    Column("content", LargeBinary, nullable=False),
+    Column("output", LargeBinary),
+    Column("output_name", Text),
+)
+asset_batch_rows = Table(
+    "asset_batch_rows",
+    metadata,
+    Column("job_id", Text, ForeignKey("jobs.id"), primary_key=True),
+    Column("row_number", Integer, primary_key=True),
+    Column("status", Text, nullable=False),
+    Column("data", Text, nullable=False),
+    Column("error", Text, nullable=False),
+)
 events = Table(
     "events",
     metadata,

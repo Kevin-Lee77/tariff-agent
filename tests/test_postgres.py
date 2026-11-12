@@ -135,9 +135,54 @@ def test_alembic_bootstraps_an_empty_postgresql_database(postgres_url, monkeypat
         "negative",
         "dictionary_entry",
         "governance_report",
+        "asset_batch_files",
+        "asset_batch_rows",
     } <= set(inspect(store.engine).get_table_names())
     task = store.submit("terms", {"pending": []}, "migration-test")
     assert task["status"] == "queued"
+
+
+def test_postgresql_atomic_file_batch_and_concurrent_dictionary_publication(postgres_url, settings):
+    from pydantic import SecretStr
+
+    from tariff_agent.asset_batches import AssetBatches
+    from tariff_agent.asset_operations import DictionaryEditor
+    from tariff_agent.store import Conflict
+    from tariff_agent.worker import process_one
+
+    settings.database_url = SecretStr(postgres_url)
+    batches = AssetBatches(postgres_url)
+    job = batches.create(
+        "term,canonical\n冻制,冷冻\n".encode(),
+        "words.csv",
+        {
+            "operation": "import",
+            "asset_kind": "dictionary",
+            "dictionary_kind": "synonym",
+            "name": "测试并发发布",
+            "synthetic": False,
+        },
+        "test",
+        "postgres-file-test",
+    )
+    process_one(settings)
+    result = batches.get(job["id"])
+    assert result["result"]["applied"]
+    editor = DictionaryEditor(postgres_url)
+    base = editor.detail(result["result"]["dictionary_id"])
+    action = [{"action": "confirm", "entry_ids": [base["entries"][0]["id"]]}]
+    versions = [editor.edit(base["id"], base["revision"], action, "test", "并发审核测试") for _ in range(2)]
+
+    def publish(version):
+        try:
+            DictionaryEditor(postgres_url).publish(version["id"], "test", "只允许一个分支生效")
+            return True
+        except Conflict:
+            return False
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        published = list(pool.map(publish, versions))
+    assert sorted(published) == [False, True]
 
 
 def test_postgresql_native_agent_checkpoint_recovery(postgres_url, settings):

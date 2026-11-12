@@ -4,7 +4,7 @@ import { api, post } from "../api";
 import { Status, Empty, ElementEditor, EvidenceSource } from "./ui";
 import { stages, kindText } from "../domain";
 import { RiskReport, LanguageReport } from "./DeclarationReport";
-import { CaseMemory } from '../pages/Memory';
+import { CaseMemory } from "../pages/Memory";
 
 function TaskDetail({ taskId, actor, onClose, onSelect, notify, refresh }) {
   const activeTask = useRef(taskId);
@@ -54,7 +54,12 @@ function TaskDetail({ taskId, actor, onClose, onSelect, notify, refresh }) {
   }, [task?.id, task?.result?.votes?.top_code]);
   async function action(path, body = {}) {
     try {
-      const result = await post(path, /\/(clarifications|review)$/.test(path) ? {...body,expected_revision:task.revision} : body);
+      const result = await post(
+        path,
+        /\/(clarifications|review)$/.test(path)
+          ? { ...body, expected_revision: task.revision }
+          : body,
+      );
       await load();
       refresh();
       notify("操作已保存");
@@ -110,7 +115,7 @@ function TaskDetail({ taskId, actor, onClose, onSelect, notify, refresh }) {
                 ["result", "处理结果"],
                 ["evidence", "引用证据"],
                 ["trace", "执行记录"],
-                ...(task.kind === 'case' ? [['memory','记忆与恢复']] : []),
+                ...(task.kind === "case" ? [["memory", "记忆与恢复"]] : []),
               ].map(([id, label]) => (
                 <button
                   className={tab === id ? "active" : ""}
@@ -125,18 +130,46 @@ function TaskDetail({ taskId, actor, onClose, onSelect, notify, refresh }) {
               ))}
             </div>
             <div className="drawer-content">
-              {tab === 'memory' && <CaseMemory task={task} reviewer={reviewer} notify={notify} />}
+              {tab === "memory" && (
+                <CaseMemory task={task} reviewer={reviewer} notify={notify} />
+              )}
               {tab === "result" && (
                 <>
                   <div className="description-card">
                     <span>业务输入</span>
                     <p>
                       {task.payload.description ||
-                        (task.kind === "terms"
-                          ? task.payload.pending.join("、")
-                          : `申报税号 ${task.payload.code}`)}
+                        (task.kind === "asset_batch"
+                          ? task.payload.filename || "业务数据导出"
+                          : task.kind === "terms"
+                            ? task.payload.pending.join("、")
+                            : `申报税号 ${task.payload.code}`)}
                     </p>
                   </div>
+                  {task.kind === "asset_batch" && (
+                    <section className="panel form-panel">
+                      <h3>业务批次处理</h3>
+                      <p>
+                        {result?.invalid
+                          ? `发现 ${result.invalid} 行错误，整批未入库。`
+                          : result?.applied
+                            ? "校验通过，已入库。"
+                            : result?.download_ready
+                              ? "导出完成，可下载结果。"
+                              : "批次排队或处理中，详细逐行进度见业务数据与词典。"}
+                      </p>
+                      <div className="batch-actions">
+                        <a href={`/v1/business/batches/${taskId}/report`}>
+                          下载结果报告
+                        </a>
+                        <a
+                          href={`/v1/business/batches/${taskId}/report?errors_only=true`}
+                        >
+                          下载错误明细
+                        </a>
+                      </div>
+                    </section>
+                  )}
                   {task.kind === "case" && (
                     <div className="step-list">
                       {stages.map(([id, label], i) => (

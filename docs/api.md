@@ -44,3 +44,5 @@
 - `/health/live`、`/health/ready`：存活和业务就绪。
 
 FastMCP 入口为 `tariff_agent.mcp_server`，不得借工具接入绕过规则和来源检查。`legacy.py` 与集成路由保留旧 Java 接口适配，旧系统及私有源码不随仓库发布。
+
+新增的`/v1/business/*`提供文件导入/导出批次、逐行报告，以及词典批量调整、祖先回退与撤销发布；详见[业务管理与接口](business-workflows.md)。
