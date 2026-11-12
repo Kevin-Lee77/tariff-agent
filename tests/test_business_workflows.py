@@ -231,7 +231,10 @@ def test_expanded_workbook_limit_is_checked_before_loading(monkeypatch):
         read_rows("large.xlsx", workbook([["term"], ["测试词"]]))
 
 
-@pytest.mark.parametrize("data", [b"term,term\na,b\n", b"term\n", b"\xff\xfe\x00", b"term\n" + b"a\n" * 5001])
+@pytest.mark.parametrize(
+    "data",
+    [b"term,term\na,b\n", b"term\n", b"\xff\xfe\x00", b"term\n" + b"a\n" * 5001, b'term\n"unterminated'],
+)
 def test_bounded_file_parser_rejects_invalid_headers_encoding_and_size(data):
     with pytest.raises(ValueError):
         read_rows("test.csv", data)

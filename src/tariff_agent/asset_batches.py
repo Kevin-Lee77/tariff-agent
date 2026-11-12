@@ -44,7 +44,8 @@ def read_rows(filename, content):
         try:
             values = list(
                 itertools.islice(
-                    csv.reader(io.StringIO(content.decode("utf-8-sig"), newline="")), MAX_ROWS + 2
+                    csv.reader(io.StringIO(content.decode("utf-8-sig"), newline=""), strict=True),
+                    MAX_ROWS + 2,
                 )
             )
         except (UnicodeError, csv.Error):
